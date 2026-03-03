@@ -3,6 +3,7 @@ package com.luizalebs.comunicacao_api.business.service;
 import com.luizalebs.comunicacao_api.api.dto.ComunicacaoInDTO;
 import com.luizalebs.comunicacao_api.api.dto.ComunicacaoOutDTO;
 import com.luizalebs.comunicacao_api.business.converter.ComunicacaoConverter;
+import com.luizalebs.comunicacao_api.infraestructure.client.ComunicacaoClient;
 import com.luizalebs.comunicacao_api.infraestructure.entities.ComunicacaoEntity;
 import com.luizalebs.comunicacao_api.infraestructure.enums.StatusEnvioEnum;
 import com.luizalebs.comunicacao_api.infraestructure.repositories.ComunicacaoRepository;
@@ -13,12 +14,14 @@ import java.util.Objects;
 @Service
 public class ComunicacaoService {
 
+    private final ComunicacaoClient client;
     private final ComunicacaoRepository repository;
     private final ComunicacaoConverter converter;
 
-    public ComunicacaoService(ComunicacaoRepository repository, ComunicacaoConverter converter) {
+    public ComunicacaoService(ComunicacaoRepository repository, ComunicacaoConverter converter, ComunicacaoClient client) {
         this.repository = repository;
         this.converter = converter;
+        this.client = client;
     }
 
     public ComunicacaoOutDTO agendarComunicacao(ComunicacaoInDTO dto) {
@@ -27,8 +30,7 @@ public class ComunicacaoService {
         }
         dto.setStatusEnvio(StatusEnvioEnum.PENDENTE);
         ComunicacaoEntity entity = converter.paraEntity(dto);
-        repository.save(entity);
-        ComunicacaoOutDTO outDTO = converter.paraDTO(entity);
+        ComunicacaoOutDTO outDTO = converter.paraDTO(repository.save(entity));
         return outDTO;
     }
 
@@ -49,5 +51,6 @@ public class ComunicacaoService {
         repository.save(entity);
         return (converter.paraDTO(entity));
     }
+
 
 }
