@@ -2,7 +2,7 @@ package com.luizalebs.comunicacao_api.business.service;
 
 import com.luizalebs.comunicacao_api.api.dto.ComunicacaoInDTO;
 import com.luizalebs.comunicacao_api.api.dto.ComunicacaoOutDTO;
-import com.luizalebs.comunicacao_api.business.converter.ComunicacaoConverter;
+import com.luizalebs.comunicacao_api.business.mapper.ComunicacaoMapper;
 import com.luizalebs.comunicacao_api.infraestructure.client.ComunicacaoClient;
 import com.luizalebs.comunicacao_api.infraestructure.entities.ComunicacaoEntity;
 import com.luizalebs.comunicacao_api.infraestructure.enums.StatusEnvioEnum;
@@ -16,9 +16,9 @@ public class ComunicacaoService {
 
     private final ComunicacaoClient client;
     private final ComunicacaoRepository repository;
-    private final ComunicacaoConverter converter;
+    private final ComunicacaoMapper converter;
 
-    public ComunicacaoService(ComunicacaoRepository repository, ComunicacaoConverter converter, ComunicacaoClient client) {
+    public ComunicacaoService(ComunicacaoRepository repository, ComunicacaoMapper converter, ComunicacaoClient client) {
         this.repository = repository;
         this.converter = converter;
         this.client = client;
@@ -29,8 +29,8 @@ public class ComunicacaoService {
             throw new RuntimeException();
         }
         dto.setStatusEnvio(StatusEnvioEnum.PENDENTE);
-        ComunicacaoEntity entity = converter.paraEntity(dto);
-        ComunicacaoOutDTO outDTO = converter.paraDTO(repository.save(entity));
+        ComunicacaoEntity entity = converter.paraComunicacaoEntity(dto);
+        ComunicacaoOutDTO outDTO = converter.paraComunicacaoDTO(repository.save(entity));
         return outDTO;
     }
 
@@ -39,7 +39,7 @@ public class ComunicacaoService {
         if (Objects.isNull(entity)) {
             throw new RuntimeException();
         }
-        return converter.paraDTO(entity);
+        return converter.paraComunicacaoDTO(entity);
     }
 
     public ComunicacaoOutDTO alterarStatusComunicacao(String emailDestinatario) {
@@ -49,7 +49,7 @@ public class ComunicacaoService {
         }
         entity.setStatusEnvio(StatusEnvioEnum.CANCELADO);
         repository.save(entity);
-        return (converter.paraDTO(entity));
+        return (converter.paraComunicacaoDTO(entity));
     }
 
 
