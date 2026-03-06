@@ -6,6 +6,8 @@ import com.luizalebs.comunicacao_api.business.mapper.ComunicacaoMapper;
 import com.luizalebs.comunicacao_api.infraestructure.client.ComunicacaoClient;
 import com.luizalebs.comunicacao_api.infraestructure.entities.ComunicacaoEntity;
 import com.luizalebs.comunicacao_api.infraestructure.enums.StatusEnvioEnum;
+import com.luizalebs.comunicacao_api.infraestructure.exceptions.IllegalArgumentException;
+import com.luizalebs.comunicacao_api.infraestructure.exceptions.ResourceNotFoundException;
 import com.luizalebs.comunicacao_api.infraestructure.repositories.ComunicacaoRepository;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class ComunicacaoService {
 
     public ComunicacaoOutDTO agendarComunicacao(ComunicacaoInDTO dto) {
         if (Objects.isNull(dto)) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException("Dados inválidos");
         }
         dto.setStatusEnvio(StatusEnvioEnum.PENDENTE);
         ComunicacaoEntity entity = converter.paraComunicacaoEntity(dto);
@@ -37,7 +39,7 @@ public class ComunicacaoService {
     public ComunicacaoOutDTO buscarStatusComunicacao(String emailDestinatario) {
         ComunicacaoEntity entity = repository.findByEmailDestinatario(emailDestinatario);
         if (Objects.isNull(entity)) {
-            throw new RuntimeException();
+            throw new ResourceNotFoundException("Status de comunicação não encontrada por esse email " + emailDestinatario );
         }
         return converter.paraComunicacaoDTO(entity);
     }
@@ -45,7 +47,7 @@ public class ComunicacaoService {
     public ComunicacaoOutDTO alterarStatusComunicacao(String emailDestinatario) {
         ComunicacaoEntity entity = repository.findByEmailDestinatario(emailDestinatario);
         if (Objects.isNull(entity)) {
-            throw new RuntimeException();
+            throw new ResourceNotFoundException("Status não encontrado para alteração" + emailDestinatario);
         }
         entity.setStatusEnvio(StatusEnvioEnum.CANCELADO);
         repository.save(entity);

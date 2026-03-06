@@ -1,0 +1,27 @@
+
+services:
+  comunicacao:
+    build: .
+    container_name: comunicacao
+    ports:
+      - "8080:8080"
+    environment:
+      - NOTIFICACAO_URL=notificacao:8083/email/comunicacao
+  notificacao:
+    build: ..\notificacao
+    container_name: notificacao
+    ports:
+      - "8083:8083"
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: no
+    environment:
+
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: ds_db
+    ports:
+      - "5433:5432"
+
