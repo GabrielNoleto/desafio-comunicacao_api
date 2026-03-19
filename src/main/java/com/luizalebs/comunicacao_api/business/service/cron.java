@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class cron {
+public class cronService {
 
     private final ComunicacaoRepository repository;
     private final ComunicacaoClient client;
